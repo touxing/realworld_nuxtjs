@@ -1,4 +1,5 @@
 node_modules
 .nuxt
 .vscode
+dist/
 yarn-error*
