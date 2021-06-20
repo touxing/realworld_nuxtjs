@@ -2,7 +2,9 @@
  * nuxt.js 配置文件
  */
 module.exports = {
+  target: 'static',
   router: {
+    base: process.env.DEPLOY_ENV === 'GH_PAGES' ? '/realworld_nuxtjs/' : '',
     linkActiveClass: 'active', // nuxt-link激活添加的类名
     // 自定义路由规则
     extendRoutes(routes, resolve) {
