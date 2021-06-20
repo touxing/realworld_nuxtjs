@@ -55,5 +55,8 @@ module.exports = {
         }
       ])
     }
+  },
+  generate: {
+    fallback: 'index.html'
   }
 }
