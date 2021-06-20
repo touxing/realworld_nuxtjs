@@ -3,7 +3,7 @@
  */
 module.exports = {
   router: {
-    linkActiveClass: 'active',
+    linkActiveClass: 'active', // nuxt-link激活添加的类名
     // 自定义路由规则
     extendRoutes(routes, resolve) {
       // 清除 nuxt.js基于 pages 目录默认生成的路由表规则

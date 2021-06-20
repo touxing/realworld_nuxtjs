@@ -12,7 +12,11 @@
           </p>
 
           <ul class="error-messages">
-            <li>That email is already taken</li>
+            <template v-for="(messages, field) in errors">
+              <li v-for="(message, index) in messages" :key="index">
+                {{ field }} {{ message }}
+              </li>
+            </template>
           </ul>
 
           <form @submit.prevent="onSubmit">
@@ -21,13 +25,15 @@
                 class="form-control form-control-lg"
                 type="text"
                 placeholder="Your Name"
+                v-model="user.username"
               />
             </fieldset>
             <fieldset class="form-group">
               <input
                 class="form-control form-control-lg"
-                type="text"
+                type="email"
                 placeholder="Email"
+                required
                 v-model="user.email"
               />
             </fieldset>
@@ -36,6 +42,8 @@
                 class="form-control form-control-lg"
                 type="password"
                 placeholder="Password"
+                required
+                minlength="8"
                 v-model="user.password"
               />
             </fieldset>
@@ -50,15 +58,21 @@
 </template>
 
 <script>
-import request from '@/utils/request'
+import { login, register } from '@/api/user'
+
+const Cookie = process.client ? require('js-cookie') : undefined
+
 export default {
   name: 'LoginIndex',
+  middleware: 'unAuthenticated',
   data() {
     return {
       user: {
-        email: '',
-        password: ''
-      }
+        username: '',
+        email: 'demo999@qq.com',
+        password: '12345678'
+      },
+      errors: {} // 错误信息
 
     }
   },
@@ -69,13 +83,23 @@ export default {
   },
   methods: {
     async onSubmit() {
-      const { data } = await request({
-        method: 'POST',
-        url: '/api/users/login',
-        data: this.user
-      })
-      console.log(data)
-    }
+      try {
+        const { data } = this.isLogin ? await login({
+          user: this.user
+        }) : await register({
+          user: this.user
+        })
+
+        // TODO: 保存用户登录状态
+        this.$store.commit('setUser', data.user)
+        // 为了繁殖刷新页面数据丢失，把数据持久化
+        Cookie.set('user', data.user)
+        this.$router.push('/')
+
+      } catch (err) {
+        this.errors = err.response.data.errors
+      }
+    },
   }
 }
 </script>
